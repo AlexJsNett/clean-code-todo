@@ -7,40 +7,35 @@ const createTaskElement = function (taskText) {
   const listItem = document.createElement("li");
 
   const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+
   const label = document.createElement("label");
-  const editInput = document.createElement("input");
-  const editButton = document.createElement("button");
-
-  const deleteButton = document.createElement("button");
-  const deleteButtonImg = document.createElement("img");
-
+  label.className = "task";
   // innerText, not innerHTML: user input must not be parsed as markup.
   label.innerText = taskText;
-  label.className = "task";
 
-  checkbox.type = "checkbox";
+  const editInput = document.createElement("input");
   editInput.type = "text";
   editInput.className = "task";
 
-  editButton.innerText = "Edit";
+  const editButton = document.createElement("button");
   editButton.className = "edit";
+  editButton.innerText = "Edit";
 
-  deleteButton.className = "delete";
+  const deleteButtonImg = document.createElement("img");
   deleteButtonImg.src = "./remove.svg";
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "delete";
   deleteButton.appendChild(deleteButtonImg);
 
-  listItem.appendChild(checkbox);
-  listItem.appendChild(label);
-  listItem.appendChild(editInput);
-  listItem.appendChild(editButton);
-  listItem.appendChild(deleteButton);
+  listItem.append(checkbox, label, editInput, editButton, deleteButton);
   return listItem;
 };
 
 const addTask = function () {
   if (!newTaskInput.value) return;
-  const listItem = createTaskElement(newTaskInput.value);
 
+  const listItem = createTaskElement(newTaskInput.value);
   moveTask(listItem, todoList, completeTask);
 
   newTaskInput.value = "";
@@ -48,11 +43,11 @@ const addTask = function () {
 
 const editTask = function () {
   const listItem = this.parentNode;
-
   const editInput = listItem.querySelector("input[type=text]");
   const label = listItem.querySelector("label");
   const editButton = listItem.querySelector(".edit");
   const isEditing = listItem.classList.contains("editMode");
+
   if (isEditing) {
     label.innerText = editInput.value;
     editButton.innerText = "Edit";
@@ -66,8 +61,7 @@ const editTask = function () {
 
 const deleteTask = function () {
   const listItem = this.parentNode;
-  const list = listItem.parentNode;
-  list.removeChild(listItem);
+  listItem.parentNode.removeChild(listItem);
 };
 
 const moveTask = function (listItem, targetList, onCheckboxChange) {
@@ -82,8 +76,6 @@ const completeTask = function () {
 const reopenTask = function () {
   moveTask(this.parentNode, todoList, completeTask);
 };
-
-addButton.addEventListener("click", addTask);
 
 const bindTaskItemEvents = function (listItem, onCheckboxChange) {
   const checkbox = listItem.querySelector("input[type=checkbox]");
@@ -100,6 +92,8 @@ const bindListItemsEvents = function (list, onCheckboxChange) {
     bindTaskItemEvents(listItem, onCheckboxChange);
   }
 };
+
+addButton.addEventListener("click", addTask);
 
 bindListItemsEvents(todoList, completeTask);
 bindListItemsEvents(completedList, reopenTask);
